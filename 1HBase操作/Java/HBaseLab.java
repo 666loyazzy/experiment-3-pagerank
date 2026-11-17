@@ -163,7 +163,7 @@ public class HBaseLab implements AutoCloseable {
             lab.countRows("Ops");
             lab.addFamily("Ops", "extra");
             lab.addRecord("Ops", "row1", new String[]{"info:value", "extra:note"}, new String[]{"old", "temporary"});
-            lab.modifyData("Ops", "row1", "info:value", "new");
+            lab.modifyData("Ops", "row1", "info:value");
             lab.scanTable("Ops");
             lab.deleteColumn("Ops", "row1", "extra:note");
             lab.deleteFamily("Ops", "extra");
