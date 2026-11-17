@@ -1,0 +1,74 @@
+connection = org.apache.hadoop.hbase.client.ConnectionFactory.createConnection(org.apache.hadoop.hbase.HBaseConfiguration.create)
+admin = connection.getAdmin
+unless admin.listNamespaces.to_a.include?('lab3_shell')
+  create_namespace 'lab3_shell'
+end
+admin.close
+connection.close
+['Student','Course','SC','Ops'].each do |name|
+  table = 'lab3_shell:' + name
+  if exists(table)
+    disable table
+    drop table
+  end
+end
+create 'lab3_shell:Student', 'info', 'Score'
+put 'lab3_shell:Student', 'Zhangsan', 'info:S_No', '2015001'
+put 'lab3_shell:Student', 'Zhangsan', 'info:S_Name', 'Zhangsan'
+put 'lab3_shell:Student', 'Zhangsan', 'info:S_Sex', 'male'
+put 'lab3_shell:Student', 'Zhangsan', 'info:S_Age', '23'
+put 'lab3_shell:Student', 'Mary', 'info:S_No', '2015003'
+put 'lab3_shell:Student', 'Mary', 'info:S_Name', 'Mary'
+put 'lab3_shell:Student', 'Mary', 'info:S_Sex', 'female'
+put 'lab3_shell:Student', 'Mary', 'info:S_Age', '22'
+put 'lab3_shell:Student', 'Lisi', 'info:S_No', '2015003'
+put 'lab3_shell:Student', 'Lisi', 'info:S_Name', 'Lisi'
+put 'lab3_shell:Student', 'Lisi', 'info:S_Sex', 'male'
+put 'lab3_shell:Student', 'Lisi', 'info:S_Age', '24'
+put 'lab3_shell:Student', 'Zhangsan', 'Score:Math', '86'
+put 'lab3_shell:Student', 'Zhangsan', 'Score:English', '69'
+create 'lab3_shell:Course', 'info'
+put 'lab3_shell:Course', '123001', 'info:C_No', '123001'
+put 'lab3_shell:Course', '123001', 'info:C_Name', 'Math'
+put 'lab3_shell:Course', '123001', 'info:C_Credit', '2.0'
+put 'lab3_shell:Course', '123002', 'info:C_No', '123002'
+put 'lab3_shell:Course', '123002', 'info:C_Name', 'Computer Science'
+put 'lab3_shell:Course', '123002', 'info:C_Credit', '5.0'
+put 'lab3_shell:Course', '123003', 'info:C_No', '123003'
+put 'lab3_shell:Course', '123003', 'info:C_Name', 'English'
+put 'lab3_shell:Course', '123003', 'info:C_Credit', '3.0'
+create 'lab3_shell:SC', 'info'
+[['2015001','123001','86'],['2015001','123003','69'],['2015002','123002','77'],['2015002','123003','99'],['2015003','123001','98'],['2015003','123002','95']].each do |row|
+  key = row[0] + '_' + row[1]
+  put 'lab3_shell:SC', key, 'info:SC_Sno', row[0]
+  put 'lab3_shell:SC', key, 'info:SC_Cno', row[1]
+  put 'lab3_shell:SC', key, 'info:SC_Score', row[2]
+end
+list
+scan 'lab3_shell:Student'
+scan 'lab3_shell:Course'
+scan 'lab3_shell:SC'
+count 'lab3_shell:Student'
+count 'lab3_shell:Course'
+count 'lab3_shell:SC'
+scan 'lab3_shell:Student', {COLUMNS => 'Score'}
+scan 'lab3_shell:Student', {COLUMNS => 'Score:Math'}
+create 'lab3_shell:Ops', 'info'
+put 'lab3_shell:Ops', 'row1', 'info:value', 'old'
+disable 'lab3_shell:Ops'
+drop 'lab3_shell:Ops'
+create 'lab3_shell:Ops', 'info'
+count 'lab3_shell:Ops'
+alter 'lab3_shell:Ops', {NAME => 'extra'}
+put 'lab3_shell:Ops', 'row1', 'info:value', 'old'
+put 'lab3_shell:Ops', 'row1', 'extra:note', 'temporary'
+put 'lab3_shell:Ops', 'row1', 'info:value', 'new'
+scan 'lab3_shell:Ops'
+deleteall 'lab3_shell:Ops', 'row1', 'extra:note'
+alter 'lab3_shell:Ops', {NAME => 'extra', METHOD => 'delete'}
+put 'lab3_shell:Ops', 'row2', 'info:value', 'second'
+deleteall 'lab3_shell:Ops', 'row2'
+count 'lab3_shell:Ops'
+truncate 'lab3_shell:Ops'
+count 'lab3_shell:Ops'
+exit
